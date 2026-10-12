@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPRY · A Day at Your Clinic (V2: Merged Stage)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* =========================================================
+   CLIENT-FIRST GLOBALS (already in your Webflow project)
+   ========================================================= */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Manrope", system-ui, -apple-system, sans-serif;
+      color: #0b1230;
+      background: #0b1230;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Bricolage Grotesque", "Manrope", sans-serif;
+    }
+
+    .page-wrapper {
+      overflow: clip;
+    }
+
+    .padding-global {
+      padding-left: 5%;
+      padding-right: 5%;
+    }
+
+    .container-large {
+      width: 100%;
+      max-width: 80rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .max-width-large {
+      width: 100%;
+      max-width: 52rem;
+    }
+
+    .max-width-small {
+      width: 100%;
+      max-width: 26rem;
+    }
+
+    .align-center {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .margin-top {
+      margin-right: 0;
+      margin-bottom: 0;
+      margin-left: 0;
+    }
+
+    .margin-top.margin-xsmall {
+      margin-top: 1rem;
+    }
+
+    .margin-top.margin-small {
+      margin-top: 1.5rem;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.85rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .button.is-coral {
+      background: linear-gradient(135deg, #f07446 0%, #ee6a3c 50%, #d64127 100%);
+      color: #fff;
+      box-shadow: 0 12px 32px rgba(238, 106, 60, 0.4);
+    }
+
+    .text-color-coral {
+      color: #ee6a3c;
+      background: linear-gradient(135deg, #f07446 0%, #ee6a3c 70%, #d64127 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* =========================================================
+   SECTION · TRACK · STICKY
+   ========================================================= */
+    .section_clinic-day {
+      position: relative;
+      background-color: #0b1230;
+    }
+
+    .clinic-day_track {
+      position: relative;
+      height: 600vh;
+    }
+
+    .clinic-day_sticky {
+      position: sticky;
+      top: 0px;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      background-color: #fccdaa;
+    }
+
+    /* Sky layers */
+    .clinic-day_stars {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .clinic-day_stars span {
+      position: absolute;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+      animation: cdTwinkle 3.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes cdTwinkle {
+      0% {
+        opacity: 0.2;
+        transform: scale(0.8);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    /* =========================================================
+   NATURAL RADIANT SUN DESIGN (Zero Planet Shadows, 100% Light)
+   Pure incandescent light source with soft corona bloom & anamorphic flare
+   ========================================================= */
+    .clinic-day_sun-wrap {
+      position: absolute;
+      width: 136px;
+      height: 136px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* 1. Broad Ambient Dawn Glow (Fills the Sky with Warmth) */
+    .clinic-day_sun-ambient {
+      position: absolute;
+      inset: -220%;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+          rgba(255, 205, 140, 0.5) 0%,
+          rgba(255, 160, 90, 0.25) 35%,
+          rgba(238, 106, 60, 0.1) 60%,
+          transparent 78%);
+      filter: blur(25px);
+      animation: cdSunAmbientPulse 6s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes cdSunAmbientPulse {
+      0% {
+        transform: scale(0.92);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: scale(1.12);
+        opacity: 0.95;
+      }
+    }
+
+    /* 2. Soft Volumetric Light Rays (Diffused Sunbeams) */
+    .clinic-day_sun-rays {
+      position: absolute;
+      inset: -140%;
+      border-radius: 50%;
+      background: repeating-conic-gradient(from 0deg,
+          rgba(255, 245, 215, 0.22) 0deg 10deg,
+          transparent 10deg 26deg,
+          rgba(255, 210, 150, 0.18) 26deg 40deg,
+          transparent 40deg 60deg);
+      -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0.45) 50%, transparent 72%);
+      mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0.45) 50%, transparent 72%);
+      filter: blur(6px);
+      animation: cdSunRaySpin 50s linear infinite;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    @keyframes cdSunRaySpin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* 3. Radiant Outer Corona Bloom (Feathered Golden Atmosphere) */
+    .clinic-day_sun-corona {
+      position: absolute;
+      inset: -45%;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+          rgba(255, 255, 240, 0.95) 0%,
+          rgba(255, 220, 140, 0.75) 35%,
+          rgba(255, 150, 60, 0.4) 60%,
+          rgba(238, 106, 60, 0.12) 75%,
+          transparent 85%);
+      filter: blur(10px);
+      animation: cdSunCoronaBloom 4.2s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes cdSunCoronaBloom {
+      0% {
+        transform: scale(0.94);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(1.14);
+        opacity: 1;
+      }
+    }
+
+    /* 4. Cinematic Horizontal Anamorphic Lens Flare Streak */
+    .clinic-day_sun-streak {
+      position: absolute;
+      left: -160%;
+      right: -160%;
+      top: 50%;
+      height: 4px;
+      transform: translateY(-50%);
+      background: linear-gradient(90deg,
+          transparent 0%,
+          rgba(255, 190, 110, 0.15) 20%,
+          rgba(255, 245, 220, 0.8) 45%,
+          #ffffff 50%,
+          rgba(255, 245, 220, 0.8) 55%,
+          rgba(255, 190, 110, 0.15) 80%,
+          transparent 100%);
+      filter: blur(2px);
+      box-shadow: 0 0 16px 3px rgba(255, 225, 160, 0.6);
+      animation: cdSunStreakShimmer 3.2s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes cdSunStreakShimmer {
+      0% {
+        opacity: 0.55;
+        transform: translateY(-50%) scaleX(0.88);
+      }
+
+      100% {
+        opacity: 0.9;
+        transform: translateY(-50%) scaleX(1.15);
+      }
+    }
+
+    /* 5. The Blazing Sun Core (Pure Brilliant Incandescent Light) */
+    .clinic-day_sun {
+      position: absolute;
+      inset: 0%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%,
+          #ffffff 0%,
+          #ffffff 22%,
+          #fff7db 42%,
+          #ffdf85 64%,
+          #ffa33a 84%,
+          #f26122 100%);
+      box-shadow:
+        0 0 25px 6px #ffffff,
+        0 0 55px 18px #ffd269,
+        0 0 95px 35px #ff7f36,
+        0 0 150px 60px rgba(238, 106, 60, 0.45);
+      animation: cdSunCoreThrob 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes cdSunCoreThrob {
+      0% {
+        filter: brightness(1);
+      }
+
+      100% {
+        filter: brightness(1.18);
+      }
+    }
+
+    /* Inner Core Incandescence layer for blinding realistic white center */
+    .clinic-day_sun-inner {
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%,
+          #ffffff 0%,
+          rgba(255, 255, 255, 0.95) 55%,
+          rgba(255, 245, 205, 0.6) 80%,
+          transparent 100%);
+      filter: blur(3px);
+      pointer-events: none;
+    }
+
+    .clinic-day_sun-glow {
+      position: absolute;
+      inset: -15%;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(255, 225, 140, 0.5) 45%,
+          transparent 75%);
+      filter: blur(6px);
+      pointer-events: none;
+    }
+
+    .clinic-day_hills {
+      position: absolute;
+      left: 0%;
+      right: 0%;
+      bottom: 0%;
+      width: 100%;
+      height: 50%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.25) 12%, rgba(0, 0, 0, 0.85) 30%, #000000 55%);
+      mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.25) 12%, rgba(0, 0, 0, 0.85) 30%, #000000 55%);
+    }
+
+    .clinic-day_hills-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .clinic-day_hills-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(11, 18, 48, 0.5) 85%, #0b1230 100%);
+    }
+
+    .clinic-day_night {
+      position: absolute;
+      inset: 0;
+      background: #070c20;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* =========================================================
+   INTRO HEADING
+   ========================================================= */
+    .clinic-day_intro {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .clinic-day_intro-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: -6vh;
+    }
+
+    .clinic-day_tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.625rem;
+    }
+
+    .clinic-day_tag {
+      padding: 0.55rem 0.95rem;
+      border-radius: 100px;
+      background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      color: #0b1230;
+      font-size: 0.8125rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 16px rgba(11, 18, 48, 0.08);
+    }
+
+    .clinic-day_tag.is-dark {
+      background-color: #0b1230;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .clinic-day_heading {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      color: #0b1230;
+      font-size: 4.85rem;
+      line-height: 1.02;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-shadow: 0 2px 24px rgba(255, 255, 255, 0.55);
+    }
+
+    /* =========================================================
+   MERGED STAGE (SPRY palette: navy #0B1230 · coral #EE6A3C · peach tints)
+   Row 1: day stepper
+   Row 2: Lottie scene (left) + story & checklist (right)
+   Row 3: SPRY · Today dashboard, 1 row x 4 columns
+   ========================================================= */
+    .clinic-day_stage {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.25rem;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .clinic-day_stage-card {
+      width: 100%;
+      max-width: 72rem;
+      padding: 0.875rem;
+      border-radius: 1.75rem;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 30px 80px rgba(11, 18, 48, 0.28), 0 4px 12px rgba(11, 18, 48, 0.06);
+      will-change: transform, opacity;
+    }
+
+    /* ---------- Day stepper ---------- */
+    .clinic-day_steps {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.375rem;
+      padding: 0.375rem;
+      border-radius: 1.125rem;
+      background-color: #fbf3ea;
+    }
+
+    .clinic-day_step {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0.75rem;
+      border: 0;
+      border-radius: 0.875rem;
+      background-color: transparent;
+      color: #0b1230;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .clinic-day_step:hover {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .clinic-day_step:active {
+      transform: scale(0.98);
+    }
+
+    .clinic-day_step.is-active {
+      background-color: #ffffff;
+      box-shadow: 0 4px 14px rgba(11, 18, 48, 0.08), inset 0 0 0 1px #f6e2d6;
+    }
+
+    .clinic-day_step-num {
+      position: relative;
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background-color: #ffffff;
+      color: #0b1230;
+      border: 1.5px solid #f2dccb;
+      font-size: 0.75rem;
+      font-weight: 800;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .clinic-day_step-check {
+      display: none;
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+
+    .clinic-day_step.is-done .clinic-day_step-num {
+      background-color: #ee6a3c;
+      border-color: #ee6a3c;
+      color: #ffffff;
+    }
+
+    .clinic-day_step.is-done .clinic-day_step-digit {
+      display: none;
+    }
+
+    .clinic-day_step.is-done .clinic-day_step-check {
+      display: block;
+    }
+
+    .clinic-day_step.is-active .clinic-day_step-num {
+      background-color: #ee6a3c;
+      border-color: #ee6a3c;
+      color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(238, 106, 60, 0.18);
+    }
+
+    .clinic-day_step-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .clinic-day_step-time {
+      color: #9a7b66;
+      font-size: 0.625rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .clinic-day_step-name {
+      font-size: 0.875rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .clinic-day_step.is-active .clinic-day_step-time {
+      color: #ee6a3c;
+    }
+
+    .clinic-day_day-bar {
+      overflow: hidden;
+      height: 4px;
+      margin: 0.125rem 0.25rem 0.625rem;
+      border-radius: 100px;
+      background-color: #f6e2d6;
+    }
+
+    .clinic-day_day-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #f6a27f 0%, #ee6a3c 60%, #d64127 100%);
+    }
+
+    /* ---------- Scene + story ---------- */
+    .clinic-day_stage-body {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.25rem;
+      align-items: stretch;
+      margin-top: 0.75rem;
+    }
+
+    .clinic-day_scene {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      border-radius: 1.25rem;
+      background: linear-gradient(180deg, #fbf3ea 75%, #e8d5bf 75%);
+    }
+
+    .clinic-day_slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: scale(1.03);
+      transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .clinic-day_slide.is-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .clinic-day_lottie {
+      width: 100%;
+      height: 100%;
+    }
+
+    .clinic-day_lottie svg {
+      display: block;
+    }
+
+    .clinic-day_room-tag {
+      position: absolute;
+      left: 0.875rem;
+      top: 0.875rem;
+      z-index: 2;
+      display: none;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 100px;
+      background: rgba(11, 18, 48, 0.9);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .clinic-day_room-num {
+      color: #f6a27f;
+    }
+
+    .clinic-day_story {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 0.375rem 0.375rem 0 0;
+    }
+
+    .clinic-day_panes {
+      display: grid;
+      flex: 1 1 auto;
+    }
+
+    .clinic-day_pane {
+      grid-area: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(14px);
+      visibility: hidden;
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.4s;
+    }
+
+    .clinic-day_pane.is-active {
+      opacity: 1;
+      transform: none;
+      visibility: visible;
+      transition: opacity 0.45s ease 0.08s, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.08s, visibility 0s;
+    }
+
+    .clinic-day_eyebrow {
+      color: #ee6a3c;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .clinic-day_pane-title {
+      margin-top: 0.5rem;
+      margin-bottom: 0px;
+      color: #0b1230;
+      font-size: 1.75rem;
+      line-height: 1.12;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .clinic-day_pane-text {
+      margin-top: 0.5rem;
+      margin-bottom: 0px;
+      color: #5b5f73;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .clinic-day_agent-tag {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 100px;
+      background-color: #fde1d3;
+      color: #b23f17;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .clinic-day_agent-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #ee6a3c;
+      box-shadow: 0 0 6px rgba(238, 106, 60, 0.5);
+    }
+
+    /* Checklist: what SPRY just did in this room (ticks as you scroll) */
+    .clinic-day_checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: auto;
+      padding: 0.875rem;
+      border-radius: 1rem;
+      background-color: #fff6f0;
+      border: 1px solid #fbe3d5;
+    }
+
+    .clinic-day_check {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      color: #8a8fa3;
+      font-size: 0.875rem;
+      font-weight: 700;
+      transition: color 0.3s ease;
+    }
+
+    .clinic-day_check-icon {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 1.375rem;
+      height: 1.375rem;
+      border-radius: 50%;
+      border: 1.5px solid #f2cdb8;
+      background-color: #ffffff;
+      color: transparent;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+
+    .clinic-day_check-icon svg {
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+
+    .clinic-day_check.is-checked {
+      color: #0b1230;
+    }
+
+    .clinic-day_check.is-checked .clinic-day_check-icon {
+      background-color: #ee6a3c;
+      border-color: #ee6a3c;
+      color: #ffffff;
+      transform: scale(1.06);
+    }
+
+    /* AI SOAP Scribe note */
+    .clinic-day_soap {
+      margin-top: auto;
+      padding: 0.75rem 0.875rem;
+      border: 1px solid #fbe3d5;
+      border-radius: 1rem;
+      background-color: #fff6f0;
+    }
+
+    .clinic-day_soap-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .clinic-day_soap-label {
+      color: #b23f17;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .clinic-day_soap-status {
+      padding: 0.18rem 0.55rem;
+      border-radius: 100px;
+      background-color: #fde1d3;
+      color: #b23f17;
+      font-size: 0.625rem;
+      font-weight: 800;
+    }
+
+    .clinic-day_soap-status.is-done {
+      background-color: #0b1230;
+      color: #ffffff;
+    }
+
+    .clinic-day_soap-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.45rem;
+    }
+
+    .clinic-day_soap-key {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background-color: #f6c9b3;
+      color: #ffffff;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      transition: background-color 0.25s ease;
+    }
+
+    .clinic-day_soap-key.is-filled {
+      background-color: #ee6a3c;
+    }
+
+    .clinic-day_soap-text {
+      min-height: 1.2rem;
+      color: #0b1230;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .clinic-day_soap-progress {
+      overflow: hidden;
+      height: 3px;
+      margin-top: 0.6rem;
+      border-radius: 100px;
+      background-color: #fbe3d5;
+    }
+
+    .clinic-day_soap-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #f07446 0%, #d64127 100%);
+    }
+
+    /* ---------- SPRY · Today dashboard (light, 1 row x 4 columns) ---------- */
+    .clinic-day_dash {
+      display: flex;
+      align-items: stretch;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 1.25rem;
+      background-color: #fff6f0;
+      border: 1px solid #fbe3d5;
+      color: #0b1230;
+    }
+
+    .clinic-day_dash-head {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.375rem;
+      padding: 0 0.5rem 0 0.375rem;
+    }
+
+    .clinic-day_dash-title {
+      font-size: 0.9375rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .clinic-day_live {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: #d64127;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .clinic-day_live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #ee6a3c;
+      box-shadow: 0 0 8px rgba(238, 106, 60, 0.7);
+      animation: cdPulse 1.4s infinite;
+    }
+
+    .clinic-day_dash-note {
+      color: #9a8f88;
+      font-size: 0.625rem;
+      font-weight: 700;
+    }
+
+    .clinic-day_metric-list {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+
+    .clinic-day_metric {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 0.625rem 0.75rem;
+      border: 1px solid #f6e2d6;
+      border-radius: 0.875rem;
+      background-color: #ffffff;
+      color: #0b1230;
+      box-shadow: 0 2px 8px rgba(11, 18, 48, 0.04);
+    }
+
+    .clinic-day_metric-value {
+      font-size: 1.625rem;
+      line-height: 1;
+      font-weight: 800;
+      font-feature-settings: "tnum";
+    }
+
+    .clinic-day_metric-label {
+      color: #5b5f73;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .clinic-day_metric-bar {
+      overflow: hidden;
+      height: 4px;
+      margin-top: auto;
+      border-radius: 100px;
+      background-color: #f6e2d6;
+    }
+
+    .clinic-day_metric-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #f6a27f 0%, #ee6a3c 100%);
+    }
+
+    /* =========================================================
+   FINAL CTA
+   ========================================================= */
+    .clinic-day_cta {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .clinic-day_cta-card {
+      width: 100%;
+      max-width: 38rem;
+      padding: 2.5rem;
+      border-radius: 2rem;
+      background-color: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(25px);
+      box-shadow: 0 35px 90px rgba(11, 18, 48, 0.4);
+      text-align: center;
+    }
+
+    .clinic-day_cta-badge {
+      display: inline-flex;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      background: #fde1d3;
+      color: #b23f17;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .clinic-day_cta-heading {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      color: #0b1230;
+      font-size: 3rem;
+      line-height: 1.05;
+      font-weight: 800;
+    }
+
+    .clinic-day_cta-meta {
+      color: #4a5375;
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+
+    @keyframes cdPulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.25
+      }
+    }
+
+    /* =========================================================
+   RESPONSIVE
+   ========================================================= */
+    /* Short laptop screens */
+    @media screen and (min-width: 992px) and (max-height: 800px) {
+      .clinic-day_stage-card {
+        max-width: 60rem;
+      }
+
+      .clinic-day_pane-title {
+        font-size: 1.5rem;
+      }
+
+      .clinic-day_pane-text {
+        display: none;
+      }
+
+      .clinic-day_checklist {
+        gap: 0.375rem;
+        padding: 0.625rem 0.75rem;
+      }
+
+      .clinic-day_soap-line:nth-child(3),
+      .clinic-day_soap-line:nth-child(5) {
+        display: none;
+      }
+    }
+
+    /* Tablet: scene on top, story below */
+    @media screen and (max-width: 991px) {
+      .clinic-day_heading {
+        font-size: 3.6rem;
+      }
+
+      .clinic-day_stage {
+        padding: 1rem;
+      }
+
+      .clinic-day_stage-card {
+        max-width: 40rem;
+      }
+
+      .clinic-day_stage-body {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
+      }
+
+      .clinic-day_scene {
+        max-height: 36vh;
+      }
+
+      .clinic-day_story {
+        padding: 0 0.25rem;
+      }
+
+      .clinic-day_checklist,
+      .clinic-day_soap {
+        margin-top: 0.75rem;
+      }
+
+      .clinic-day_dash {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .clinic-day_dash-head {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 0.25rem;
+      }
+
+      .clinic-day_dash-note {
+        display: none;
+      }
+
+      .clinic-day_step {
+        padding: 0.5rem;
+        gap: 0.5rem;
+      }
+
+      .clinic-day_step-time {
+        display: none;
+      }
+
+      .clinic-day_step-name {
+        font-size: 0.75rem;
+        line-height: 1.15;
+        white-space: normal;
+      }
+    }
+
+    /* Mobile */
+    @media screen and (max-width: 767px) {
+      .clinic-day_heading {
+        font-size: 2.65rem;
+      }
+
+      .clinic-day_stage {
+        padding: 0.75rem;
+      }
+
+      .clinic-day_stage-card {
+        padding: 0.5rem;
+        border-radius: 1.375rem;
+      }
+
+      .clinic-day_steps {
+        padding: 0.25rem;
+        gap: 0.25rem;
+      }
+
+      .clinic-day_step {
+        justify-content: center;
+        padding: 0.375rem;
+      }
+
+      .clinic-day_step-text {
+        display: none;
+      }
+
+      .clinic-day_step-num {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
+
+      .clinic-day_stage-body {
+        margin-top: 0.5rem;
+        gap: 0.625rem;
+      }
+
+      .clinic-day_scene {
+        max-height: 28vh;
+        border-radius: 1rem;
+      }
+
+      .clinic-day_room-tag {
+        left: 0.5rem;
+        top: 0.5rem;
+        font-size: 0.65rem;
+      }
+
+      .clinic-day_pane-title {
+        font-size: 1.25rem;
+      }
+
+      .clinic-day_pane-text {
+        display: none;
+      }
+
+      .clinic-day_agent-tag {
+        margin-top: 0.5rem;
+      }
+
+      /* .clinic-day_checklist {
+        display: none;
+      } */
+
+      .clinic-day_soap {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.625rem;
+      }
+
+      .clinic-day_soap-line:nth-child(3),
+      .clinic-day_soap-line:nth-child(5) {
+        display: none;
+      }
+
+      .clinic-day_dash {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 1rem;
+      }
+
+      .clinic-day_metric-list {
+        gap: 0.3rem;
+      }
+
+      .clinic-day_metric {
+        padding: 0.45rem 0.5rem;
+        gap: 0.2rem;
+      }
+
+      .clinic-day_metric-value {
+        font-size: 1.125rem;
+      }
+
+      .clinic-day_metric-label {
+        font-size: 0.5625rem;
+      }
+
+      .clinic-day_cta-heading {
+        font-size: 2.2rem;
+      }
+
+      .clinic-day_cta-card {
+        padding: 1.75rem 1.25rem;
+      }
+    }
+
+    @media screen and (max-width: 479px) {
+      .clinic-day_heading {
+        font-size: 2.2rem;
+      }
+
+      .clinic-day_metric-bar {
+        display: none;
+      }
+    }
+
+    /* Short phones (e.g. 375x667) */
+    @media screen and (max-width: 767px) and (max-height: 720px) {
+      .clinic-day_scene {
+        max-height: 25vh;
+      }
+
+      .clinic-day_pane-title {
+        font-size: 1.0625rem;
+        margin-top: 0.3rem;
+      }
+
+      .clinic-day_dash-head {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <main class="main-wrapper">
+
+      <section class="section_clinic-day" data-clinic-day="true">
+        <div class="clinic-day_track">
+          <div class="clinic-day_sticky">
+
+            <!-- Sky -->
+            <div class="clinic-day_stars"></div>
+            <div class="clinic-day_sun-wrap">
+              <div class="clinic-day_sun-ambient"></div>
+              <div class="clinic-day_sun-rays"></div>
+              <div class="clinic-day_sun-corona"></div>
+              <div class="clinic-day_sun-streak"></div>
+              <div class="clinic-day_sun">
+                <div class="clinic-day_sun-glow"></div>
+                <div class="clinic-day_sun-inner"></div>
+              </div>
+            </div>
+            <div class="clinic-day_hills">
+              <img src="assets/colorado-mountains-1-1.jpg" class="clinic-day_hills-img" alt="Colorado Rocky Mountains background" />
+              <div class="clinic-day_hills-overlay"></div>
+            </div>
+            <div class="clinic-day_night"></div>
+
+            <!-- Intro heading -->
+            <div class="clinic-day_intro">
+              <div class="padding-global">
+                <div class="container-large">
+                  <div class="clinic-day_intro-content">
+                    <div class="clinic-day_tag-list">
+                      <div class="clinic-day_tag">APTA Private Practice 2026</div>
+                      <div class="clinic-day_tag is-dark">Booth #426</div>
+                    </div>
+                    <div class="margin-top margin-small">
+                      <div class="max-width-large align-center">
+                        <h1 class="clinic-day_heading">Your clinic day, <span class="text-color-coral">cared for
+                            together.</span></h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- =========================================================
+       MERGED STAGE: stepper / Lottie + story / SPRY · Today
+       ========================================================= -->
+            <div class="clinic-day_stage">
+              <div class="clinic-day_stage-card">
+
+                <!-- Day progress: one line that fills from morning to evening -->
+                <div class="clinic-day_day-bar">
+                  <div class="clinic-day_day-fill"></div>
+                </div>
+
+                <!-- Day stepper: click to jump to a room -->
+                <div class="clinic-day_steps">
+                  <button class="clinic-day_step" type="button" data-cd-goto="0">
+                    <span class="clinic-day_step-num"><span class="clinic-day_step-digit">1</span><span
+                        class="clinic-day_step-check"><svg viewBox="0 0 16 16" fill="none">
+                          <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span></span>
+                    <span class="clinic-day_step-text"><span class="clinic-day_step-time">Digital intake</span><span
+                        class="clinic-day_step-name">Front desk</span></span>
+                  </button>
+                  <button class="clinic-day_step" type="button" data-cd-goto="1">
+                    <span class="clinic-day_step-num"><span class="clinic-day_step-digit">2</span><span
+                        class="clinic-day_step-check"><svg viewBox="0 0 16 16" fill="none">
+                          <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span></span>
+                    <span class="clinic-day_step-text"><span class="clinic-day_step-time">AI SOAP Scribe</span><span
+                        class="clinic-day_step-name">Treatment gym</span></span>
+                  </button>
+                  <button class="clinic-day_step" type="button" data-cd-goto="2">
+                    <span class="clinic-day_step-num"><span class="clinic-day_step-digit">3</span><span
+                        class="clinic-day_step-check"><svg viewBox="0 0 16 16" fill="none">
+                          <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span></span>
+                    <span class="clinic-day_step-text"><span class="clinic-day_step-time">Claims + auth</span><span
+                        class="clinic-day_step-name">Billing</span></span>
+                  </button>
+                  <button class="clinic-day_step" type="button" data-cd-goto="3">
+                    <span class="clinic-day_step-num"><span class="clinic-day_step-digit">4</span><span
+                        class="clinic-day_step-check"><svg viewBox="0 0 16 16" fill="none">
+                          <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span></span>
+                    <span class="clinic-day_step-text"><span class="clinic-day_step-time">Analytics</span><span
+                        class="clinic-day_step-name">Owner office</span></span>
+                  </button>
+                </div>
+
+                <div class="clinic-day_stage-body">
+
+                  <!-- Scene: one Lottie per room -->
+                  <div class="clinic-day_scene">
+                    <div class="clinic-day_slide is-active" data-cd-slide="0">
+                      <div class="clinic-day_lottie" data-cd-lottie="frontDesk"
+                        data-cd-src="assets/lottie-front-desk.json"></div>
+                      <div class="clinic-day_room-tag"><span class="clinic-day_room-num">01</span><span>Your clinic ·
+                          Front desk</span></div>
+                    </div>
+                    <div class="clinic-day_slide" data-cd-slide="1">
+                      <div class="clinic-day_lottie" data-cd-lottie="treatmentGym"
+                        data-cd-src="assets/lottie-treatment-gym.json"></div>
+                      <div class="clinic-day_room-tag"><span class="clinic-day_room-num">02</span><span>Your clinic ·
+                          Treatment gym</span></div>
+                    </div>
+                    <div class="clinic-day_slide" data-cd-slide="2">
+                      <div class="clinic-day_lottie" data-cd-lottie="billing" data-cd-src="assets/lottie-billing.json">
+                      </div>
+                      <div class="clinic-day_room-tag"><span class="clinic-day_room-num">03</span><span>Your clinic ·
+                          Billing</span></div>
+                    </div>
+                    <div class="clinic-day_slide" data-cd-slide="3">
+                      <div class="clinic-day_lottie" data-cd-lottie="ownerOffice"
+                        data-cd-src="assets/lottie-owner-office.json"></div>
+                      <div class="clinic-day_room-tag"><span class="clinic-day_room-num">04</span><span>Your clinic ·
+                          Owner office</span></div>
+                    </div>
+                  </div>
+
+                  <!-- Story: room text + what SPRY just did (ticks with scroll) -->
+                  <div class="clinic-day_story">
+                    <div class="clinic-day_panes">
+                      <div class="clinic-day_pane is-active" data-cd-pane="0">
+                        <div class="clinic-day_eyebrow">Front desk</div>
+                        <h3 class="clinic-day_pane-title">Intake and eligibility, done before patients arrive.</h3>
+                        <div class="max-width-small">
+                          <p class="clinic-day_pane-text">Patients complete intake on their phone. SPRY checks insurance
+                            before they reach the desk.</p>
+                        </div>
+                        <div class="clinic-day_agent-tag"><span class="clinic-day_agent-dot"></span><span>SPRY · Digital
+                            Intake + Eligibility</span></div>
+                        <div class="clinic-day_checklist">
+                          <div class="clinic-day_check" data-cd-check="0"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Intake form completed on the phone</span></div>
+                          <div class="clinic-day_check" data-cd-check="1"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Insurance eligibility verified</span></div>
+                          <div class="clinic-day_check" data-cd-check="2"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Patient checked in, no clipboard</span></div>
+                        </div>
+                      </div>
+                      <div class="clinic-day_pane" data-cd-pane="1">
+                        <div class="clinic-day_eyebrow">Treatment gym</div>
+                        <h3 class="clinic-day_pane-title">You treat. SPRY AI writes the SOAP note.</h3>
+                        <div class="clinic-day_agent-tag"><span class="clinic-day_agent-dot"></span><span>SPRY · AI SOAP
+                            Scribe</span></div>
+                        <div class="clinic-day_soap">
+                          <div class="clinic-day_soap-header">
+                            <div class="clinic-day_soap-label">AI Scribe · Live note</div>
+                            <div class="clinic-day_soap-status">Drafting live</div>
+                          </div>
+                          <div class="clinic-day_soap-line">
+                            <div class="clinic-day_soap-key">S</div>
+                            <div class="clinic-day_soap-text">Knee pain 3/10, down from 6/10. Stairs easier.</div>
+                          </div>
+                          <div class="clinic-day_soap-line">
+                            <div class="clinic-day_soap-key">O</div>
+                            <div class="clinic-day_soap-text">Flexion 0 to 115 degrees. Gait steady without assist.
+                            </div>
+                          </div>
+                          <div class="clinic-day_soap-line">
+                            <div class="clinic-day_soap-key">A</div>
+                            <div class="clinic-day_soap-text">Progressing toward goals. Tolerating added load.</div>
+                          </div>
+                          <div class="clinic-day_soap-line">
+                            <div class="clinic-day_soap-key">P</div>
+                            <div class="clinic-day_soap-text">Continue 2x/week. Add step-downs. Re-assess in 2 weeks.
+                            </div>
+                          </div>
+                          <div class="clinic-day_soap-progress">
+                            <div class="clinic-day_soap-fill"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="clinic-day_pane" data-cd-pane="2">
+                        <div class="clinic-day_eyebrow">Billing</div>
+                        <h3 class="clinic-day_pane-title">Claims go out clean. Auths keep moving.</h3>
+                        <div class="max-width-small">
+                          <p class="clinic-day_pane-text">Each claim is checked before it is sent, and prior auths are
+                            tracked until they are approved.</p>
+                        </div>
+                        <div class="clinic-day_agent-tag"><span class="clinic-day_agent-dot"></span><span>SPRY · Claim
+                            Intelligence + Prior Auth AI</span></div>
+                        <div class="clinic-day_checklist">
+                          <div class="clinic-day_check" data-cd-check="0"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Claim checked before it is sent</span></div>
+                          <div class="clinic-day_check" data-cd-check="1"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Prior auth tracked to approval</span></div>
+                          <div class="clinic-day_check" data-cd-check="2"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Clean claim sent to the payer</span></div>
+                        </div>
+                      </div>
+                      <div class="clinic-day_pane" data-cd-pane="3">
+                        <div class="clinic-day_eyebrow">Owner office</div>
+                        <h3 class="clinic-day_pane-title">The whole clinic day, in one live view.</h3>
+                        <div class="max-width-small">
+                          <p class="clinic-day_pane-text">Visits, notes, claims and refilled slots, updated as they
+                            happen.</p>
+                        </div>
+                        <div class="clinic-day_agent-tag"><span class="clinic-day_agent-dot"></span><span>SPRY ·
+                            Reporting &amp; Analytics</span></div>
+                        <div class="clinic-day_checklist">
+                          <div class="clinic-day_check" data-cd-check="0"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Every visit and note in one view</span></div>
+                          <div class="clinic-day_check" data-cd-check="1"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Cancelled slots refilled</span></div>
+                          <div class="clinic-day_check" data-cd-check="2"><span class="clinic-day_check-icon"><svg
+                                viewBox="0 0 16 16" fill="none">
+                                <path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.4"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg></span><span>Day closed with every note signed</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- SPRY · Today: all four numbers rise together through the day -->
+                <div class="clinic-day_dash">
+                  <div class="clinic-day_dash-head">
+                    <div class="clinic-day_dash-title">SPRY · Today</div>
+                    <div class="clinic-day_live"><span class="clinic-day_live-dot"></span><span>Live</span></div>
+                    <div class="clinic-day_dash-note">Sample data</div>
+                  </div>
+                  <div class="clinic-day_metric-list">
+                    <div class="clinic-day_metric" data-cd-metric="0" data-cd-goal="48"
+                      data-cd-max="48">
+                      <span class="clinic-day_metric-value">0</span>
+                      <span class="clinic-day_metric-label">Patients checked in</span>
+                      <span class="clinic-day_metric-bar"><span class="clinic-day_metric-fill"></span></span>
+                    </div>
+                    <div class="clinic-day_metric" data-cd-metric="1" data-cd-goal="46"
+                      data-cd-max="48">
+                      <span class="clinic-day_metric-value">0</span>
+                      <span class="clinic-day_metric-label">SOAP notes by AI Scribe</span>
+                      <span class="clinic-day_metric-bar"><span class="clinic-day_metric-fill"></span></span>
+                    </div>
+                    <div class="clinic-day_metric" data-cd-metric="2" data-cd-goal="41"
+                      data-cd-max="48">
+                      <span class="clinic-day_metric-value">0</span>
+                      <span class="clinic-day_metric-label">Claims sent clean</span>
+                      <span class="clinic-day_metric-bar"><span class="clinic-day_metric-fill"></span></span>
+                    </div>
+                    <div class="clinic-day_metric" data-cd-metric="3" data-cd-goal="3" data-cd-max="4">
+                      <span class="clinic-day_metric-value">0</span>
+                      <span class="clinic-day_metric-label">Cancellations refilled</span>
+                      <span class="clinic-day_metric-bar"><span class="clinic-day_metric-fill"></span></span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Final CTA -->
+            <div class="clinic-day_cta">
+              <div class="clinic-day_cta-card">
+                <div class="clinic-day_cta-badge">APTA PPS 2026 · Booth #426</div>
+                <div class="margin-top margin-xsmall">
+                  <h2 class="clinic-day_cta-heading">Home on time.<br /><span class="text-color-coral">Care,
+                      together.</span></h2>
+                </div>
+                <div class="margin-top margin-small">
+                  <a href="#" class="button is-coral">Book a 1:1 at Booth #426</a>
+                </div>
+                <div class="margin-top margin-xsmall">
+                  <div class="clinic-day_cta-meta">See the AI SOAP Scribe live · Nov 11–14 · Colorado Springs</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Lottie player + bundled scene data (lottie-data.js lets it run from file://) -->
+        <script src="assets/lottie.min.js"></script>
+        <script src="assets/lottie-data.js"></script>
+
+        <script>
+          /* =========================================================
+             SPRY · A DAY AT YOUR CLINIC · scroll script
+             Scroll progress p (0 to 1) drives everything:
+               0.00-0.10  intro heading
+               0.08-0.14  stage card comes in
+               0.12-0.86  four stages (STAGES below)
+               0.86-0.90  stage card leaves
+               0.88-1.00  night + CTA
+             ========================================================= */
+          (function () {
+            var section = document.querySelector('[data-clinic-day]');
+            if (!section) return;
+
+            var q = function (s) {return section.querySelector(s);};
+            var qa = function (s) {return Array.prototype.slice.call(section.querySelectorAll(s));};
+
+            /* ---------- 1. Elements ---------- */
+            var track = q('.clinic-day_track'), sticky = q('.clinic-day_sticky');
+            var sunWrap = q('.clinic-day_sun-wrap'), stars = q('.clinic-day_stars'), night = q('.clinic-day_night');
+            var intro = q('.clinic-day_intro');
+            var stage = q('.clinic-day_stage'), stageCard = q('.clinic-day_stage-card');
+            var steps = qa('.clinic-day_step'), slides = qa('[data-cd-slide]'), panes = qa('[data-cd-pane]');
+            var metrics = qa('[data-cd-metric]'), checks = qa('[data-cd-check]');
+            var dayFill = q('.clinic-day_day-fill');
+            var soapTexts = qa('.clinic-day_soap-text'), soapKeys = qa('.clinic-day_soap-key');
+            var soapFill = q('.clinic-day_soap-fill'), soapStatus = q('.clinic-day_soap-status');
+            var cta = q('.clinic-day_cta'), ctaCard = q('.clinic-day_cta-card');
+
+            /* ---------- 2. Timing ---------- */
+            var STAGES = [[0.12, 0.31], [0.31, 0.50], [0.50, 0.69], [0.69, 0.86]]; /* [start, end] per room */
+            var SKY = [[0.00, 252, 205, 170], [0.35, 191, 224, 255], [0.70, 250, 186, 130], [0.86, 110, 85, 130], [1.00, 11, 18, 48]];
+
+            /* ---------- 3. Helpers ---------- */
+            var clamp = function (x) {return Math.max(0, Math.min(1, x));};
+            var ease = function (x) {x = clamp(x); return x * x * (3 - 2 * x);};
+            var lerp = function (a, b, t) {return a + (b - a) * t;};
+            function keyframes(K, p) {
+              var a = K[0], b = K[K.length - 1];
+              for (var i = 0; i < K.length - 1; i++) {if (p >= K[i][0] && p <= K[i + 1][0]) {a = K[i]; b = K[i + 1]; break;} }
+              var t = ease((p - a[0]) / ((b[0] - a[0]) || 1));
+              return a.slice(1).map(function (v, i) {return lerp(v, b[i + 1], t);});
+            }
+            var local = function (i, p) {return clamp((p - STAGES[i][0]) / (STAGES[i][1] - STAGES[i][0]));};
+
+            /* ---------- 4. Lottie: one player per room ----------
+               Frames 0-120 build the scene, 120-180 loop while the room is open. */
+            var players = slides.map(function (slide) {
+              var box = slide.querySelector('[data-cd-lottie]');
+              if (!box || !window.lottie) return null;
+              var key = box.getAttribute('data-cd-lottie');
+              var opts = {
+                container: box, renderer: 'svg', loop: true, autoplay: false,
+                rendererSettings: {preserveAspectRatio: 'xMidYMid meet'}
+              };
+              if (window.LOTTIE_DATA && window.LOTTIE_DATA[key]) opts.animationData = window.LOTTIE_DATA[key];
+              else opts.path = box.getAttribute('data-cd-src');
+              return lottie.loadAnimation(opts);
+            });
+            function playRoom(i) {
+              players.forEach(function (pl, n) {
+                if (!pl) return;
+                if (n === i) pl.playSegments([[0, 120], [120, 180]], true);
+                else pl.pause();
+              });
+            }
+
+            /* ---------- 5. Stars ---------- */
+            if (stars && !stars.children.length) {
+              for (var s = 0; s < 45; s++) {
+                var st = document.createElement('span'), r = 2 + (s % 3);
+                st.style.cssText = 'left:' + ((s * 37 + 13) % 96 + 2) + '%;top:' + ((s * 23 + 7) % 48 + 2) + '%;width:' + r + 'px;height:' + r + 'px;animation-delay:' + (s * 0.15).toFixed(2) + 's;';
+                stars.appendChild(st);
+              }
+            }
+
+            /* ---------- 6. SOAP note setup ---------- */
+            soapTexts.forEach(function (el) {el.setAttribute('data-full', el.textContent.trim()); el.textContent = '';});
+            var soapTotal = soapTexts.reduce(function (n, el) {return n + el.getAttribute('data-full').length;}, 0);
+
+            /* ---------- 7. Click a step to jump to that room ---------- */
+            function goTo(i) {
+              var range = track.offsetHeight - sticky.offsetHeight;
+              var mid = STAGES[i][0] + (STAGES[i][1] - STAGES[i][0]) * 0.45;
+              var top = track.getBoundingClientRect().top + window.pageYOffset;
+              window.scrollTo({top: top + range * mid, behavior: 'smooth'});
+            }
+            steps.forEach(function (b) {b.addEventListener('click', function () {goTo(+b.getAttribute('data-cd-goto'));});});
+
+            /* ---------- 8. Render one frame ---------- */
+            var activeRoom = -1;
+            function render(p) {
+              /* Sky, sun, night */
+              var c = keyframes(SKY, p).map(Math.round);
+              sticky.style.backgroundColor = 'rgb(' + c.join(',') + ')';
+              sunWrap.style.left = (6 + p * 88) + '%';
+              sunWrap.style.top = (72 - Math.sin(Math.PI * p) * 60) + '%';
+              sunWrap.style.opacity = 1 - clamp((p - 0.82) / 0.1);
+              stars.style.opacity = clamp((p - 0.80) / 0.16);
+              night.style.opacity = clamp((p - 0.76) / 0.22) * 0.85;
+
+              /* Intro heading */
+              var introP = clamp((p - 0.03) / 0.07);
+              intro.style.opacity = 1 - introP;
+              intro.style.transform = 'translateY(' + (-introP * 40) + 'px) scale(' + (1 - introP * 0.06) + ')';
+
+              /* Stage card in/out */
+              var sIn = ease((p - 0.08) / 0.06), sOut = ease((p - 0.86) / 0.04);
+              var sAlpha = sIn * (1 - sOut);
+              stage.style.opacity = sAlpha;
+              stage.style.pointerEvents = sAlpha > 0.5 ? 'auto' : 'none';
+              stageCard.style.transform = 'translateY(' + ((1 - sIn) * 40 - sOut * 30) + 'px) scale(' + (0.96 + 0.04 * sIn) + ')';
+
+              /* Which room is open */
+              var room = 0;
+              STAGES.forEach(function (st, i) {if (p >= st[0]) room = i;});
+              if (room !== activeRoom) {
+                activeRoom = room;
+                slides.forEach(function (el, i) {el.classList.toggle('is-active', i === room);});
+                panes.forEach(function (el, i) {el.classList.toggle('is-active', i === room);});
+                playRoom(room);
+              }
+
+              /* Stepper + numbers */
+              steps.forEach(function (b, i) {
+                b.classList.toggle('is-active', i === room);
+                b.classList.toggle('is-done', i < room);
+              });
+              /* SPRY · Today: all numbers rise together across the whole day
+                 and land on their final value at the end of the last room */
+              var dayP = clamp((p - STAGES[0][0]) / (STAGES[3][1] - STAGES[0][0]));
+              dayFill.style.width = (dayP * 100) + '%';
+              metrics.forEach(function (m, i) {
+                var goal = +m.getAttribute('data-cd-goal'), max = +m.getAttribute('data-cd-max');
+                var v = Math.round(goal * dayP);
+                m.querySelector('.clinic-day_metric-value').textContent = v;
+                m.querySelector('.clinic-day_metric-fill').style.width = (v / max * 100) + '%';
+              });
+
+              /* Checklist in the open room ticks one by one */
+              checks.forEach(function (el) {
+                var r = +el.closest('[data-cd-pane]').getAttribute('data-cd-pane');
+                var k = +el.getAttribute('data-cd-check');
+                el.classList.toggle('is-checked', r < room || (r === room && local(r, p) > 0.15 + k * 0.22));
+              });
+
+              /* AI SOAP Scribe typing (room 2) */
+              var sp = clamp(local(1, p) / 0.75), budget = Math.round(sp * soapTotal);
+              soapTexts.forEach(function (el, i) {
+                var full = el.getAttribute('data-full'), n = Math.max(0, Math.min(full.length, budget));
+                budget -= full.length;
+                if (el.textContent.length !== n) el.textContent = full.slice(0, n);
+                if (soapKeys[i]) soapKeys[i].classList.toggle('is-filled', n > 0);
+              });
+              soapFill.style.width = (sp * 100) + '%';
+              soapStatus.textContent = sp >= 1 ? 'Ready to sign' : 'Drafting live';
+              soapStatus.classList.toggle('is-done', sp >= 1);
+
+              /* Night CTA */
+              var endO = ease((p - 0.88) / 0.08);
+              cta.style.opacity = endO;
+              cta.style.pointerEvents = endO > 0.5 ? 'auto' : 'none';
+              ctaCard.style.transform = 'scale(' + (0.92 + 0.08 * endO) + ')';
+            }
+
+            /* ---------- 9. Smooth scroll loop ---------- */
+            var target = 0, current = 0;
+            function readScroll() {
+              var r = track.getBoundingClientRect(), range = r.height - sticky.offsetHeight;
+              target = range > 0 ? clamp(-r.top / range) : 0;
+            }
+            function tick() {
+              readScroll();
+              current += (target - current) * 0.08;
+              if (Math.abs(target - current) < 0.0004) current = target;
+              render(current);
+              requestAnimationFrame(tick);
+            }
+            readScroll(); current = target; render(current);
+            requestAnimationFrame(tick);
+          })();
+        </script>
+
+      </section>
+    </main>
+  </div>
+</body>
+
+</html>
